@@ -1,21 +1,24 @@
 import asyncio
 from fastapi import FastAPI, Request, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from hume.legacy import HumeVoiceClient, MicrophoneInterface
-from typing import List, Dict
+from typing import Dict
 import json
-import sys
-from io import StringIO
-import contextlib
 import logging
 
 app = FastAPI()
-templates = Jinja2Templates(directory="templates")
 
-active_connections: Dict[WebSocket, bool] = {}
+# Serve the static folder
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
+# Serve the homepage (static/index.html)
+@app.get("/", response_class=HTMLResponse)
+async def serve_index():
+    return FileResponse("static/index.html")
+
+# Allow all CORS (development friendly)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -24,12 +27,18 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# WebSocket connection tracking
+active_connections: Dict[WebSocket, bool] = {}
+
+# Hume API credentials
 HUME_API_KEY = "aq0kRkUm3KkJAmDRmVAPzXvPA1POBFAaErGJZtepGSejgTbH"
 CONFIG_ID = "681f31b0-3735-4297-8664-7510563f09d2"
 
+# Logging setup
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# WebSocket logging handler
 class WebSocketHandler(logging.Handler):
     def __init__(self, websocket):
         super().__init__()
@@ -46,10 +55,7 @@ class WebSocketHandler(logging.Handler):
         except Exception as e:
             print(f"Error sending log to WebSocket: {e}")
 
-@app.get("/", response_class=HTMLResponse)
-async def read_root(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
-
+# WebSocket endpoint
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
@@ -81,12 +87,14 @@ async def websocket_endpoint(websocket: WebSocket):
             del active_connections[websocket]
         logger.removeHandler(ws_handler)
 
+# Basic API endpoint
 @app.post("/ask")
 async def ask_ai(request: Request):
     data = await request.json()
     question = data.get("question")
     return {"response": f"Hey, I'm here for you. You said: '{question}'"}
 
+# Start Hume Voice AI
 @app.get("/start-voice")
 async def start_voice_recognition():
     try:
@@ -102,20 +110,16 @@ async def start_voice_recognition():
             
             while True:
                 try:
-                    logger.info(f"DEBUG: Waiting for transcription... Handlers: {logger.handlers}")
+                    logger.info("Waiting for transcription...")
                     text = await mic_interface.get_transcription()
-                    logger.info(f"DEBUG: Received from get_transcription: {text}")
+                    logger.info(f"Received: {text}")
                     if text:
-                        logger.info(f"User said: {text}")
-                        for connection, is_active in active_connections.items():
+                        for connection, is_active in list(active_connections.items()):
                             if is_active:
                                 try:
                                     await connection.send_json({"type": "user", "message": text})
-                                    logger.info(f"[DEBUG] Sent user message to WebSocket: {connection}")
                                     ai_response = f"I understand you said: {text}"
-                                    logger.info(f"AI: {ai_response}")
                                     await connection.send_json({"type": "ai", "message": ai_response})
-                                    logger.info(f"[DEBUG] Sent AI message to WebSocket: {connection}")
                                 except Exception as e:
                                     logger.error(f"Error sending to WebSocket: {e}")
                                     if connection in active_connections:
@@ -124,19 +128,17 @@ async def start_voice_recognition():
                     logger.error(f"Error processing voice input: {e}")
                     break
                     
-        logger.info("Voice recognition session ended")
         return {"status": "Voice recognition started"}
     except Exception as e:
         logger.error(f"Error in voice recognition: {e}")
         return {"error": str(e)}
 
+# Manual test endpoint to push to active WebSocket clients
 @app.post("/send-test")
 async def send_test():
-
-    for connection, is_active in active_connections.items():
+    for connection, is_active in list(active_connections.items()):
         try:
-            await connection.send_json({"type": "ai", "message": "[Manual Test] This is a manual test message from /send-test endpoint."})
-            logger.info(f"[DEBUG] Sent manual test message to WebSocket: {connection}")
+            await connection.send_json({"type": "ai", "message": "[Manual Test] This is a test message."})
         except Exception as e:
-            logger.error(f"[DEBUG] Error sending manual test message: {e}")
-    return {"status": "Test message sent to all active WebSocket clients."}
+            logger.error(f"Error sending manual test message: {e}")
+    return {"status": "Test message sent to all WebSocket clients."}
