@@ -1,1 +1,495 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Serenity AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Comfortaa', 'Poppins', sans-serif;
+      background: #111216;
+      color: #1e1e2f;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    .phone-bg {
+      min-height: 100vh;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      z-index: 0;
+      background: #111216;
+    }
+    .phone-mockup {
+      position: relative;
+      width: 320px;
+      max-width: 96vw;
+      min-height: 600px;
+      max-height: 96vh;
+      background: linear-gradient(160deg, #fffbe6 70%, #ffe9b3 100%);
+      border-radius: 48px 48px 44px 44px/56px 56px 44px 44px;
+      box-shadow:
+        0 8px 48px 0 rgba(102,166,255,0.18),
+        0 1.5px 0 #ffe9b3 inset,
+        0 2px 16px 2px #ffe9b3 inset,
+        0 0 0 8px #fffbe6 inset;
+      border: 2.5px solid #ffe9b3;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 1;
+      margin: 24px 0;
+      transition: box-shadow 0.3s;
+      justify-content: center;
+    }
+    .phone-notch {
+      width: 120px;
+      height: 18px;
+      background: #fffbe6;
+      border-radius: 0 0 18px 18px;
+      margin: 0 auto;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 2px 8px rgba(102,166,255,0.08);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .phone-camera {
+      width: 18px;
+      height: 18px;
+      background: radial-gradient(circle at 30% 30%, #ffe9b3 60%, #e6c77c 100%);
+      border-radius: 50%;
+      box-shadow: 0 1.5px 4px #ffe9b3 inset, 0 0 0 2px #fffbe6;
+      margin: 0 8px;
+      border: 1.5px solid #ffe9b3;
+      position: relative;
+      top: 2px;
+    }
+    .phone-speaker {
+      width: 38px;
+      height: 7px;
+      background: #ffe9b3;
+      border-radius: 6px;
+      margin: 0 8px;
+      box-shadow: 0 1px 2px #fffbe6 inset;
+      position: relative;
+      top: 2px;
+    }
+    .phone-bottom-shade {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 38px;
+      background: linear-gradient(0deg, #ffe9b3 0%, rgba(255,255,255,0.01) 100%);
+      border-radius: 0 0 44px 44px/0 0 44px 44px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .phone-inner {
+      width: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding-top: 32px;
+      padding-bottom: 18px;
+      overflow-y: auto;
+    }
+    @media (max-width: 430px) {
+      .phone-mockup {
+        width: 99vw;
+        min-height: 99vh;
+        border-radius: 0;
+        margin: 0;
+      }
+      .phone-inner {
+        padding-top: 18px;
+        padding-bottom: 8px;
+      }
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      margin-top: 18px;
+      margin-bottom: 6px;
+      gap: 12px;
+    }
+    .logo-circle {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffe066 0%, #ffd700 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(255,224,102,0.13);
+      font-size: 1.3rem;
+      color: #fff;
+      font-weight: bold;
+      letter-spacing: 2px;
+      user-select: none;
+    }
+    .main-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #bfa100;
+      margin: 0;
+      letter-spacing: 1px;
+    }
+    .subtitle {
+      font-size: 0.98rem;
+      color: #bfa100;
+      margin-bottom: 10px;
+      text-align: center;
+      font-weight: 400;
+      letter-spacing: 0.03em;
+    }
+    .card {
+      background: rgba(255,255,255,0.97);
+      border-radius: 28px;
+      box-shadow: 0 8px 32px rgba(255,224,102,0.10);
+      padding: 18px 10px 14px 10px;
+      max-width: 300px;
+      width: 100%;
+      margin-bottom: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: fadeIn 1.2s cubic-bezier(.4,0,.2,1);
+      justify-content: center;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    #audio-visualizer {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      height: 70px;
+      width: 220px;
+      margin: 10px 0 6px 0;
+      background: linear-gradient(135deg, #fffbe6 0%, #ffe9b3 100%);
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(255,224,102,0.10);
+      border: 1.5px solid #ffe9b3;
+      transition: box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .bar {
+      width: 7px;
+      margin: 0 2px;
+      background: linear-gradient(180deg, #ffd700 0%, #ffe066 100%);
+      border-radius: 12px 12px 18px 18px;
+      transition: height 0.18s cubic-bezier(.4,1.6,.4,1), background 0.3s;
+      height: 16px;
+      display: inline-block;
+      box-shadow: 0 4px 16px 0 rgba(255,224,102,0.18), 0 2px 8px rgba(255,224,102,0.08);
+      position: relative;
+      z-index: 1;
+      animation: bounceBar 1.2s infinite alternate cubic-bezier(.4,1.6,.4,1);
+    }
+    .bar-face {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: 12px;
+      height: 12px;
+      background: #fffbe6;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px #ffe06644;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #ffd700;
+      z-index: 2;
+      pointer-events: none;
+      opacity: 0.85;
+    }
+    @keyframes bounceBar {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(1.08); }
+    }
+    #audio-visualizer .bar:nth-child(3n) { background: linear-gradient(180deg, #ffe066 0%, #ffd700 100%); }
+    #audio-visualizer .bar:nth-child(4n) { background: linear-gradient(180deg, #fffbe6 0%, #ffe066 100%); }
+    #audio-visualizer .bar:nth-child(5n) { background: linear-gradient(180deg, #ffe9b3 0%, #ffd700 100%); }
+    #audio-visualizer .bar:nth-child(2n) { box-shadow: 0 6px 18px 0 rgba(255,224,102,0.18); }
+    #audio-visualizer .bar:nth-child(7n) { background: linear-gradient(180deg, #ffd700 0%, #fffbe6 100%); }
+    #conversationArea {
+      width: 100%;
+      min-height: 60px;
+      max-height: 120px;
+      overflow-y: auto;
+      background: rgba(255, 251, 230, 0.85);
+      border-radius: 18px;
+      box-shadow: 0 4px 16px rgba(255,224,102,0.07);
+      padding: 8px 7px 6px 7px;
+      margin-bottom: 10px;
+      font-size: 0.98rem;
+      color: #bfa100;
+      white-space: pre-wrap;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      animation: fadeIn 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    .message {
+      margin-bottom: 2px;
+      padding: 4px 0;
+      border-radius: 8px;
+      max-width: 90%;
+      word-break: break-word;
+      line-height: 1.5;
+      transition: background 0.2s;
+    }
+    .user-message {
+      align-self: flex-end;
+      background: linear-gradient(90deg, #fffbe6 0%, #ffe9b3 100%);
+      color: #bfa100;
+      font-weight: 600;
+      text-align: right;
+      box-shadow: 0 2px 8px rgba(255,224,102,0.04);
+    }
+    .ai-message {
+      align-self: flex-start;
+      background: linear-gradient(90deg, #fffbe6 0%, #ffe9b3 100%);
+      color: #7c6f00;
+      font-style: italic;
+      text-align: left;
+      box-shadow: 0 2px 8px rgba(255,224,102,0.04);
+    }
+    button#startVoice {
+      margin-bottom: 10px;
+      margin-top: 8px;
+      background: #ffd700;
+      border: none;
+      border-radius: 35px;
+      color: #fffbe6;
+      font-size: 1.3rem;
+      padding: 14px 36px;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(255,224,102,0.18);
+      transition: background 0.3s ease, transform 0.2s ease;
+      user-select: none;
+      width: 100%;
+      max-width: 320px;
+      font-family: 'Comfortaa', 'Poppins', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    button#startVoice:hover {
+      background: #ffe066;
+      color: #bfa100;
+      transform: scale(1.05);
+    }
+    #quoteArea {
+      max-width: 300px;
+      margin-top: 8px;
+      padding: 10px 12px;
+      background: linear-gradient(145deg, #fffbe6, #ffe9b3);
+      border-radius: 22px;
+      border: 2px solid #ffd700;
+      box-shadow: 0 8px 16px rgba(255,224,102,0.13);
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: #bfa100;
+      text-align: center;
+      user-select: none;
+      line-height: 1.4;
+      font-style: italic;
+      letter-spacing: 0.025em;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+    .footer {
+      margin-top: 16px;
+      color: #bfa100;
+      font-size: 0.88rem;
+      text-align: center;
+      letter-spacing: 0.02em;
+      padding-bottom: 10px;
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-bg">
+    <div class="phone-mockup">
+      <div class="phone-notch">
+        <div class="phone-camera"></div>
+        <div class="phone-speaker"></div>
+      </div>
+      <div class="phone-inner">
+        <div class="logo-area">
+          <div class="logo-circle">🧘‍♂️</div>
+          <div class="main-title">Serenity AI</div>
+        </div>
+        <div class="subtitle">Your safe space for support, reflection, and growth.</div>
+        <div class="card">
+          <button id="startVoice">Start Voice</button>
+          <div id="audio-visualizer"></div>
+          <div id="conversationArea" aria-live="polite" aria-label="Conversation area"></div>
+        </div>
+        <div id="quoteArea">
+          "Mental health is not a destination, but a process. It's about how you drive, not where you're going." — Noam Shpancer
+        </div>
+        <div class="footer">
+          Serenity AI &copy; 2024 &mdash; You are not alone. Every step matters.
+        </div>
+      </div>
+      <div class="phone-bottom-shade"></div>
+    </div>
+  </div>
+  <script>
+    const startVoiceBtn = document.getElementById("startVoice");
+    const visualizer = document.getElementById("audio-visualizer");
+    const conversationArea = document.getElementById("conversationArea");
+    let ws = null;
+    let isListening = false;
+    let micStream = null;
+    let micAudioContext = null;
+    let micAnalyser = null;
+    let micAnimationId = null;
+    let bars = [];
+    const BAR_COUNT = 24;
+    function createBars() {
+      visualizer.innerHTML = '';
+      bars = [];
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        if (i % 7 === 2) {
+          const face = document.createElement('div');
+          face.className = 'bar-face';
+          face.innerHTML = '😊';
+          bar.appendChild(face);
+        } else if (i % 7 === 4) {
+          const face = document.createElement('div');
+          face.className = 'bar-face';
+          face.innerHTML = '😌';
+          bar.appendChild(face);
+        }
+        visualizer.appendChild(bar);
+        bars.push(bar);
+      }
+    }
+    createBars();
+    function appendMessage(text, sender) {
+      const div = document.createElement("div");
+      div.className = `message ${sender === "user" ? "user-message" : "ai-message"}`;
+      div.textContent = text;
+      conversationArea.appendChild(div);
+      conversationArea.scrollTop = conversationArea.scrollHeight;
+    }
+    function connectWebSocket() {
+      ws = new WebSocket(`ws://${window.location.host}/ws`);
+      ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        if (data.type === "user") {
+          appendMessage(data.message, "user");
+        } else if (data.type === "ai") {
+          appendMessage(data.message, "ai");
+        }
+      };
+      ws.onclose = function() {
+        ws = null;
+      };
+      ws.onerror = function(error) {
+        ws = null;
+      };
+    }
+    connectWebSocket();
+    async function startMicVisualizer() {
+      visualizer.style.opacity = 1;
+      micAudioContext = new (window.AudioContext || window.webkitAudioContext)();
+      micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const source = micAudioContext.createMediaStreamSource(micStream);
+      micAnalyser = micAudioContext.createAnalyser();
+      micAnalyser.fftSize = 64;
+      source.connect(micAnalyser);
+      animateMicVisualizer();
+    }
+    function stopMicVisualizer() {
+      visualizer.style.opacity = 0.3;
+      if (micAnimationId) cancelAnimationFrame(micAnimationId);
+      if (micStream) {
+        micStream.getTracks().forEach(track => track.stop());
+        micStream = null;
+      }
+      if (micAudioContext) {
+        micAudioContext.close();
+        micAudioContext = null;
+      }
+    }
+    function animateMicVisualizer() {
+      if (!micAnalyser) return;
+      const bufferLength = micAnalyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      micAnalyser.getByteFrequencyData(dataArray);
+      for (let i = 0; i < BAR_COUNT; i++) {
+        const dataIdx = Math.floor(i * bufferLength / BAR_COUNT);
+        let barHeight = Math.max(16, dataArray[dataIdx] * 1.1 + 10 + Math.sin(Date.now()/180 + i) * 5);
+        barHeight = Math.min(barHeight, 70);
+        bars[i].style.height = barHeight + 'px';
+        bars[i].style.filter = `brightness(${0.98 + Math.sin(Date.now()/400 + i) * 0.08})`;
+      }
+      micAnimationId = requestAnimationFrame(animateMicVisualizer);
+    }
+    function updateButtonState() {
+      if (isListening) {
+        startVoiceBtn.textContent = "Stop Voice";
+        startVoiceBtn.style.background = "#ff6b6b";
+      } else {
+        startVoiceBtn.textContent = "Start Voice";
+        startVoiceBtn.style.background = "#66a6ff";
+      }
+    }
+    async function startVoice() {
+      try {
+        if (!isListening) {
+          isListening = true;
+          updateButtonState();
+          await startMicVisualizer();
+          if (ws && ws.readyState === 1) {
+            ws.send(JSON.stringify({ type: "start_voice" }));
+          }
+          await fetch("/start-voice");
+        } else {
+          isListening = false;
+          updateButtonState();
+          stopMicVisualizer();
+          if (ws && ws.readyState === 1) {
+            ws.send(JSON.stringify({ type: "stop_voice" }));
+          }
+        }
+      } catch (error) {
+        isListening = false;
+        updateButtonState();
+        stopMicVisualizer();
+        alert('Microphone access denied or error: ' + error.message);
+      }
+    }
+    startVoiceBtn.addEventListener("click", startVoice);
+  </script>
+</body>
+</html>
